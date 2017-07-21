@@ -9,8 +9,8 @@ agua com gas
 batata
 3
 8.300000
-175
+174
 mandioca
 4
 5.000000
-50
+45
