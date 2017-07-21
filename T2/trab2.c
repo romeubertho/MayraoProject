@@ -173,6 +173,12 @@ int RegistrarVenda()
     {
         printf("\nDigite a quantidade do produto: ");
         fgets(buffer, sizeof buffer, stdin);
+        if (atoi(buffer) > Produtos[index].Estoque)
+        {
+            printf("Quantidade solicitada indisponivel. Disponivel: %d.\n\n", Produtos[index].Estoque);
+            return 0;
+        }
+        Vendas[j].Codigo = codigo;
         Vendas[j].Quantidade = atoi(buffer);
 
         printf("\nDigite o dia da venda: ");
@@ -188,10 +194,10 @@ int RegistrarVenda()
         Vendas[j].Ano = atoi(buffer);
 
         Produtos[index].Estoque = Produtos[index].Estoque - Vendas[j].Quantidade;
+        j++;
     }
     else
-        printf("Produto nao encontrado");
-    j++;
+        printf("Produto nao encontrado.\n\n");
     return 0;
 }
 int RelatorioMensalVenda()
