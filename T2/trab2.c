@@ -49,12 +49,8 @@ int LoadFIle()
     if (fp)
     {
         char buffer[100], buffer1[100], buffer2[100], buffer3[100], buffer4[100];
-        while (fgets(buffer, 100, fp))
+        while (fgets(buffer, 100, fp) && fgets(buffer1, 100, fp) && fgets(buffer2, 100, fp) && fgets(buffer3, 100, fp) && fgets(buffer4, 100, fp))
         {
-            fgets(buffer1, 100, fp);
-            fgets(buffer2, 100, fp);
-            fgets(buffer3, 100, fp);
-            fgets(buffer4, 100, fp);
             Vendas[j].Codigo = atoi(buffer);
             Vendas[j].Quantidade = atoi(buffer1);
             Vendas[j].Dia = atoi(buffer2);
@@ -83,11 +79,11 @@ int WriteFile()
     fp = fopen("Vendas.txt", "w");
     for (int k = 0; k < j; k++)
     {
-        fprintf(fp, "%d\r\n", Vendas[k].Codigo);
-        fprintf(fp, "%d\r\n", Vendas[k].Quantidade);
-        fprintf(fp, "%d\r\n", Vendas[k].Dia);
-        fprintf(fp, "%d\r\n", Vendas[k].Mes);
-        fprintf(fp, "%d\r\n", Vendas[k].Ano);
+        fprintf(fp, "%d\n", Vendas[k].Codigo);
+        fprintf(fp, "%d\n", Vendas[k].Quantidade);
+        fprintf(fp, "%d\n", Vendas[k].Dia);
+        fprintf(fp, "%d\n", Vendas[k].Mes);
+        fprintf(fp, "%d\n", Vendas[k].Ano);
     }
     fclose(fp);
 }
