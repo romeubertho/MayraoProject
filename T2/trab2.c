@@ -232,13 +232,17 @@ int RelatorioProdutos()
     printf("\nDigite o codigo do produto: ");
     fgets(buffer, sizeof buffer, stdin);
     codigo = atoi(buffer);
+    fp = fopen("RelatorioProduto.txt", "w");
     for (int k = 0; k < j; k++)
     {
         if (Vendas[k].Codigo == codigo)
         {
             //----Armazena as vendas
-            fp = fopen("RelatorioProduto.txt", "w");
-            fprintf(fp, "%d;%d;%d;%d;%d\r\n", Vendas[k].Codigo, Vendas[k].Quantidade, Vendas[k].Dia, Vendas[k].Mes, Vendas[k].Ano);
+            fprintf(fp, "%d\n", Vendas[k].Codigo);
+            fprintf(fp, "%d\n", Vendas[k].Quantidade);
+            fprintf(fp, "%d\n", Vendas[k].Dia);
+            fprintf(fp, "%d\n", Vendas[k].Mes);
+            fprintf(fp, "%d\n", Vendas[k].Ano);
         }
     }
     fclose(fp);
