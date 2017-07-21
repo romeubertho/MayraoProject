@@ -21,20 +21,8 @@ struct Venda //estrutura para a venda
 };
 struct Venda Vendas[1000];
 struct Produto Produtos[1000];
-int i = 0;
-int j = 0;
-const char *getfield(char *line, int num)
-{
-    const char *tok;
-    for (tok = strtok(line, ";");
-         tok && *tok;
-         tok = strtok(NULL, ";\n"))
-    {
-        if (!--num)
-            return tok;
-    }
-    return NULL;
-}
+int i = 0; // num de produtos armazenados
+int j = 0; // num de vendas armazenadas
 int LoadFIle()
 {
 
@@ -43,23 +31,16 @@ int LoadFIle()
     fp = fopen("Produtos.txt", "r");
     if (fp)
     {
-        char buffer[100];
-        while (fgets(buffer, 100, fp))
+        char buffer[100], buffer1[100], buffer2[100], buffer3[100];
+        while (fgets(buffer, 100, fp) && fgets(buffer1, 100, fp) && fgets(buffer2, 100, fp) && fgets(buffer3, 100, fp))
         {
-            char *tmp1 = strdup(buffer);
-            char *tmp2 = strdup(buffer);
-            char *tmp3 = strdup(buffer);
-            char *tmp4 = strdup(buffer);
-            Produtos[i].Codigo = atoi(getfield(tmp1, 1));
-            strcpy(Produtos[i].Nome, getfield(tmp2, 2));
-            Produtos[i].Preco = atof(getfield(tmp3, 3));
-            Produtos[i].Estoque = atoi(getfield(tmp4, 4));
+            strcpy(Produtos[i].Nome, buffer);
+            strtok(Produtos[i].Nome, "\n");
+            Produtos[i].Codigo = atoi(buffer1);
+            Produtos[i].Preco = atof(buffer2);
+            Produtos[i].Estoque = atoi(buffer3);
             printf("%d %s %f %d\n", Produtos[i].Codigo, Produtos[i].Nome, Produtos[i].Preco, Produtos[i].Estoque);
             i++;
-            free(tmp1);
-            free(tmp2);
-            free(tmp3);
-            free(tmp4);
         }
         fclose(fp);
     }
@@ -67,25 +48,19 @@ int LoadFIle()
     fp = fopen("Vendas.txt", "r");
     if (fp)
     {
-        char buffer[100];
+        char buffer[100], buffer1[100], buffer2[100], buffer3[100], buffer4[100];
         while (fgets(buffer, 100, fp))
         {
-            char *tmp1 = strdup(buffer);
-            char *tmp2 = strdup(buffer);
-            char *tmp3 = strdup(buffer);
-            char *tmp4 = strdup(buffer);
-            char *tmp5 = strdup(buffer);
-            Vendas[j].Codigo = atoi(getfield(tmp1, 1));
-            Vendas[j].Quantidade = atoi(getfield(tmp2, 2));
-            Vendas[j].Dia = atoi(getfield(tmp3, 3));
-            Vendas[j].Mes = atoi(getfield(tmp4, 4));
-            Vendas[j].Ano = atoi(getfield(tmp5, 5));
+            fgets(buffer1, 100, fp);
+            fgets(buffer2, 100, fp);
+            fgets(buffer3, 100, fp);
+            fgets(buffer4, 100, fp);
+            Vendas[j].Codigo = atoi(buffer);
+            Vendas[j].Quantidade = atoi(buffer1);
+            Vendas[j].Dia = atoi(buffer2);
+            Vendas[j].Mes = atoi(buffer3);
+            Vendas[j].Ano = atoi(buffer4);
             j++;
-            free(tmp1);
-            free(tmp2);
-            free(tmp3);
-            free(tmp4);
-            free(tmp5);
         }
         fclose(fp);
     }
@@ -97,27 +72,44 @@ int WriteFile()
     fp = fopen("Produtos.txt", "w");
     for (int k = 0; k < i; k++)
         if (Produtos[k].Codigo >= 0)
-            fprintf(fp, "%d;%s;%f;%d\r\n", Produtos[k].Codigo, Produtos[k].Nome, Produtos[k].Preco, Produtos[k].Estoque);
+        {
+            fprintf(fp, "%s\n", Produtos[k].Nome);
+            fprintf(fp, "%d\n", Produtos[k].Codigo);
+            fprintf(fp, "%f\n", Produtos[k].Preco);
+            fprintf(fp, "%d\n", Produtos[k].Estoque);
+        }
     fclose(fp);
     //----Armazena as vendas
     fp = fopen("Vendas.txt", "w");
     for (int k = 0; k < j; k++)
-        fprintf(fp, "%d;%d;%d;%d;%d\r\n", Vendas[k].Codigo, Vendas[k].Quantidade, Vendas[k].Dia, Vendas[k].Mes, Vendas[k].Ano);
+    {
+        fprintf(fp, "%d\r\n", Vendas[k].Codigo);
+        fprintf(fp, "%d\r\n", Vendas[k].Quantidade);
+        fprintf(fp, "%d\r\n", Vendas[k].Dia);
+        fprintf(fp, "%d\r\n", Vendas[k].Mes);
+        fprintf(fp, "%d\r\n", Vendas[k].Ano);
+    }
     fclose(fp);
 }
 int CadastrarProduto()
 {
-    int codigo;
-    char nome[100];
-    float preco;
+    char buffer[100];
     printf("\nDigite o codigo do produto: ");
-    scanf("%d", &Produtos[i].Codigo);
+    fgets(buffer, sizeof buffer, stdin);
+    Produtos[i].Codigo = atoi(buffer);
+
     printf("\nDigite o nome do produto: ");
-    scanf("%s", &Produtos[i].Nome);
+    fgets(buffer, 100, stdin);
+    strcpy(Produtos[i].Nome, buffer);
+    strtok(Produtos[i].Nome, "\n");
+
     printf("\nDigite o preco do produto: ");
-    scanf("%f", &Produtos[i].Preco);
+    fgets(buffer, sizeof buffer, stdin);
+    Produtos[i].Preco = atof(buffer);
+
     printf("\nDigite a quantidade em estoque do produto: ");
-    scanf("%d", &Produtos[i].Estoque);
+    fgets(buffer, sizeof buffer, stdin);
+    Produtos[i].Estoque = atoi(buffer);
     i++;
     return 0;
 }
@@ -133,19 +125,25 @@ int BuscarProduto(int codigo)
 int EditarProduto()
 {
     int codigo;
-    char nome[100];
-    float preco;
+    char buffer[100];
     printf("\nDigite o codigo do produto: ");
-    scanf("%d", &codigo);
+    fgets(buffer, sizeof buffer, stdin);
+    codigo = atoi(buffer);
     int index = BuscarProduto(codigo);
     if (index >= 0)
     {
         printf("\nDigite o nome do produto: ");
-        scanf("%s", &Produtos[index].Nome);
+        fgets(buffer, 100, stdin);
+        strcpy(Produtos[index].Nome, buffer);
+        strtok(Produtos[index].Nome, "\n");
+
         printf("\nDigite o preco do produto: ");
-        scanf("%f", &Produtos[index].Preco);
+        fgets(buffer, sizeof buffer, stdin);
+        Produtos[index].Preco = atof(buffer);
+
         printf("\nDigite a quantidade em estoque do produto: ");
-        scanf("%f", &Produtos[index].Estoque);
+        fgets(buffer, sizeof buffer, stdin);
+        Produtos[index].Estoque = atoi(buffer);
     }
     else
         printf("Produto nao encontrado");
@@ -154,10 +152,10 @@ int EditarProduto()
 int EliminarProduto()
 {
     int codigo;
-    char nome[100];
-    float preco;
+    char buffer[100];
     printf("\nDigite o codigo do produto: ");
-    scanf("%d", &codigo);
+    fgets(buffer, sizeof buffer, stdin);
+    codigo = atoi(buffer);
     int index = BuscarProduto(codigo);
     if (index >= 0)
     {
@@ -170,21 +168,29 @@ int EliminarProduto()
 int RegistrarVenda()
 {
     int codigo;
-    char nome[100];
-    float preco;
+    char buffer[100];
     printf("\nDigite o codigo do produto: ");
-    scanf("%d", &codigo);
+    fgets(buffer, sizeof buffer, stdin);
+    codigo = atoi(buffer);
     int index = BuscarProduto(codigo);
     if (index >= 0)
     {
         printf("\nDigite a quantidade do produto: ");
-        scanf("%d", &Vendas[j].Quantidade);
+        fgets(buffer, sizeof buffer, stdin);
+        Vendas[j].Quantidade = atoi(buffer);
+
         printf("\nDigite o dia da venda: ");
-        scanf("%d", &Vendas[j].Dia);
+        fgets(buffer, sizeof buffer, stdin);
+        Vendas[j].Dia = atoi(buffer);
+
         printf("\nDigite o mes da venda: ");
-        scanf("%d", &Vendas[j].Mes);
+        fgets(buffer, sizeof buffer, stdin);
+        Vendas[j].Mes = atoi(buffer);
+
         printf("\nDigite o ano da venda: ");
-        scanf("%d", &Vendas[j].Ano);
+        fgets(buffer, sizeof buffer, stdin);
+        Vendas[j].Ano = atoi(buffer);
+
         Produtos[index].Estoque = Produtos[index].Estoque - Vendas[j].Quantidade;
     }
     else
@@ -195,9 +201,11 @@ int RegistrarVenda()
 int RelatorioMensalVenda()
 {
     int mesVenda;
+    char buffer[100];
     FILE *fp;
     printf("\nDigite o mes da venda: ");
-    scanf("%d", &mesVenda);
+    fgets(buffer, sizeof buffer, stdin);
+    mesVenda = atoi(buffer);
     for (int k = 0; k < j; k++)
     {
         if (Vendas[k].Mes == mesVenda)
@@ -213,9 +221,11 @@ int RelatorioMensalVenda()
 int RelatorioProdutos()
 {
     int codigo;
+    char buffer[100];
     FILE *fp;
     printf("\nDigite o codigo do produto: ");
-    scanf("%d", &codigo);
+    fgets(buffer, sizeof buffer, stdin);
+    codigo = atoi(buffer);
     for (int k = 0; k < j; k++)
     {
         if (Vendas[k].Codigo == codigo)
@@ -278,8 +288,9 @@ int main(int argc, char **argv)
     {
         printf("1 - Cadastrar produtos\n2 - Editar produtos\n3 - Eliminar produtos\n4 - Registrar vendas\n5 - Relatorio mensal de vendas\n6 - Relatorio de produtos\n7 - Ranking de produtos\n8 - Sair");
         printf(" \nEscolha uma opcao: ");
-        scanf("%d", &opcao);
-        printf("%d\n", opcao);
+        char buffer[100];
+        fgets(buffer, sizeof buffer, stdin);
+        opcao = atoi(buffer);
         int result;
         switch (opcao)
         {
