@@ -208,6 +208,7 @@ int RelatorioMensalVenda()
 {
     int mesVenda;
     char buffer[100];
+    int index;
     FILE *fp;
     printf("\nDigite o mes da venda: ");
     fgets(buffer, sizeof buffer, stdin);
@@ -218,11 +219,8 @@ int RelatorioMensalVenda()
         if (Vendas[k].Mes == mesVenda)
         {
             //----Armazena as vendas
-            fprintf(fp, "%d\n", Vendas[k].Codigo);
-            fprintf(fp, "%d\n", Vendas[k].Quantidade);
-            fprintf(fp, "%d\n", Vendas[k].Dia);
-            fprintf(fp, "%d\n", Vendas[k].Mes);
-            fprintf(fp, "%d\n", Vendas[k].Ano);
+            index = BuscarProduto(Vendas[k].Codigo);
+            fprintf(fp, "%s, %d venda(s), %d/%d/%d \n", Produtos[index].Nome, Vendas[k].Quantidade, Vendas[k].Dia, Vendas[k].Mes, Vendas[k].Ano);
         }
     }
     fclose(fp);
@@ -232,21 +230,19 @@ int RelatorioProdutos()
 {
     int codigo;
     char buffer[100];
+    int index;
     FILE *fp;
     printf("\nDigite o codigo do produto: ");
     fgets(buffer, sizeof buffer, stdin);
     codigo = atoi(buffer);
+    index = BuscarProduto(codigo);
     fp = fopen("RelatorioProduto.txt", "w");
     for (int k = 0; k < j; k++)
     {
         if (Vendas[k].Codigo == codigo)
         {
             //----Armazena as vendas
-            fprintf(fp, "%d\n", Vendas[k].Codigo);
-            fprintf(fp, "%d\n", Vendas[k].Quantidade);
-            fprintf(fp, "%d\n", Vendas[k].Dia);
-            fprintf(fp, "%d\n", Vendas[k].Mes);
-            fprintf(fp, "%d\n", Vendas[k].Ano);
+            fprintf(fp, "%s, %d venda(s), %d/%d/%d \n", Produtos[index].Nome, Vendas[k].Quantidade, Vendas[k].Dia, Vendas[k].Mes, Vendas[k].Ano);
         }
     }
     fclose(fp);
