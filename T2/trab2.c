@@ -10,6 +10,7 @@ struct Produto //estrutura para o produto
     char Nome[100];
     float Preco;
     int Estoque;
+    int QtdVendida;
 };
 struct Venda //estrutura para a venda
 {
@@ -39,6 +40,7 @@ int LoadFIle()
             Produtos[i].Codigo = atoi(buffer1);
             Produtos[i].Preco = atof(buffer2);
             Produtos[i].Estoque = atoi(buffer3);
+            Produtos[i].QtdVendida = 0;
             printf("%d %s %f %d\n", Produtos[i].Codigo, Produtos[i].Nome, Produtos[i].Preco, Produtos[i].Estoque);
             i++;
         }
@@ -106,6 +108,7 @@ int CadastrarProduto()
     printf("\nDigite a quantidade em estoque do produto: ");
     fgets(buffer, sizeof buffer, stdin);
     Produtos[i].Estoque = atoi(buffer);
+    Produtos[i].QtdVendida = 0;
     i++;
     return 0;
 }
@@ -140,6 +143,7 @@ int EditarProduto()
         printf("\nDigite a quantidade em estoque do produto: ");
         fgets(buffer, sizeof buffer, stdin);
         Produtos[index].Estoque = atoi(buffer);
+        Produtos[index].QtdVendida = 0;
     }
     else
         printf("Produto nao encontrado");
@@ -252,35 +256,15 @@ int RankingProdutos()
 {
     struct Venda VendasAux[1000];
     FILE *fp;
+    fp = fopen("RankingProdutos.txt", "w");
     for (int k = 0; k < j; k++)
     {
-        VendasAux[k].Codigo = Vendas[k].Codigo;
-        VendasAux[k].Quantidade = Vendas[k].Quantidade;
+        int index = BuscarProduto(Vendas[k].Codigo);
+        Produtos[index].QtdVendida += Vendas[k].Quantidade;
     }
-    for (int k = 0; k < j; k++)
+    for (int k = 0; k < i; k++)
     {
-        int c = -1;
-        int qnt = 0;
-        if (VendasAux[k].Codigo >= 0)
-        {
-            c = VendasAux[k].Codigo;
-            qnt += VendasAux[k].Quantidade;
-            VendasAux[k].Codigo = -1;
-
-            for (int h = 0; h < j; h++)
-            {
-                if (VendasAux[h].Codigo >= 0 && VendasAux[h].Codigo == c)
-                {
-                    qnt += VendasAux[h].Quantidade;
-                    VendasAux[h].Codigo = -1;
-                }
-            }
-        }
-        fp = fopen("RankingProdutos.txt", "a+");
-        for (int k = 0; k < j; k++)
-        {
-            fprintf(fp, "%d;%d\r\n", c, qnt);
-        }
+        fprintf(fp, "%s, %d venda(s) \n", Produtos[k].Nome, Produtos[k].QtdVendida);
     }
     fclose(fp);
     return 0;
